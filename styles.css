@@ -193,3 +193,26 @@ button:hover {
 .instructions a:hover {
     text-decoration: underline;
 }
+
+footer {
+    background-color: #f5f5f5;
+    padding: 20px 0;
+    text-align: center;
+  }
+  
+  
+  footer p {
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+  }
+  
+  footer .heart {
+    color: #ff4081;
+    font-size: 18px;
+  }
+  
+  footer .city {
+    font-weight: bold;
+  }
+  
