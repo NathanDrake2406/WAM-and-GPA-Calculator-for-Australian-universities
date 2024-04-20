@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPA and WAM Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Simple GPA and WAM Calculator</h1>
+        <div class="input-section">
+            <div class="degree-input">
+                <label for="degree-credits">Your Total Degree Credit Points:</label>
+                <select id="degree-credits">
+                    <option value="144">144</option>
+                    <option value="192">192</option>
+                    <option value="240">240</option>
+                    <option value="288">288</option>
+                    <option value="custom">Custom</option>
+                </select>
+                <input type="number" id="custom-credits" placeholder="Enter custom credits" min="0" disabled>
+            </div>
+            <div class="instructions">
+                <p>Enter your subject details and click Add Subject (ENTER is faster).</p>
+                <p>For more information about the grading system, <a href="https://en.wikipedia.org/wiki/Academic_grading_in_Australia" target="_blank">please click here</a>.</p>
+            </div>
+            <h2>Grade Details</h2>
+            <div class="subject-input">
+                <label for="subject-name">Subject Name</label>
+                <input type="text" id="subject-name" placeholder="Optional">
+                <label for="subject-grade">Grade</label>
+                <input type="number" id="subject-grade" placeholder="Enter grade" min="0" max="100" step="0.01">
+                <label for="subject-credits">Credit Points</label>
+                <input type="number" id="subject-credits" placeholder="Enter the credit points of the subject" min="0">
+                <button id="add-subject">Add Subject</button>
+            </div>
+            <ul id="subject-list"></ul>
+        </div>
+        <div class="result-section">
+            <h2>Result</h2>
+            <p>WAM: <span id="wam-result">0.00</span></p>
+            <p>GPA: <span id="gpa-result">0.00</span></p>
+            <p>4-Point GPA: <span id="four-point-gpa-result">0.00</span> </p>
+            <p>Remaining Credits: <span id="remaining-credits">144</span></p>
+        </div>
+    </div>
+    <div id="alert-modal" class="modal">
+        <div class="modal-content">
+            <p id="alert-message"></p>
+            <button id="alert-close">OK</button>
+        </div>
+    </div>
+    <script src="calculator.js"></script>
+</body>
+</html> 
