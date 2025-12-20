@@ -60,6 +60,8 @@ function getGradeText(grade) {
     }
 }
 
+
+
 function updateSubjectList() {
     const subjectList = document.getElementById('subject-list');
     subjectList.innerHTML = '';
@@ -226,4 +228,43 @@ function showAlert(message) {
             alertModal.style.display = 'none';
         }
     };
+}
+
+const GRADE_THRESHOLDS = {
+    HD: 85,
+    D: 75,
+    C: 65,
+    P: 50
+};
+
+document.getElementById('calculate-threshold-btn').addEventListener('click', calculateNextGradeThreshold);
+
+function calculateNextGradeThreshold() {
+    let totalCurrentMarks = subjects.reduce((total, subject) => total + (subject.grade * subject.credits), 0);
+    let totalCurrentCredits = subjects.reduce((total, subject) => total + subject.credits, 0);
+    let remainingCredits = totalDegreeCredits - totalCurrentCredits;
+    let results = {};
+
+    for (const [gradeName, gradeThreshold] of Object.entries(GRADE_THRESHOLDS)) {
+        let requiredTotal = gradeThreshold * totalDegreeCredits;
+        if (totalCurrentMarks < requiredTotal) {
+            let neededMarks = (requiredTotal - totalCurrentMarks) / remainingCredits;
+            if (neededMarks <= 100) {
+                results[gradeName] = neededMarks.toFixed(2);
+            }
+        }
+    }
+
+    displayThresholdResults(results);
+}
+
+function displayThresholdResults(results) {
+    const resultsContainer = document.getElementById('grade-threshold-results');
+    resultsContainer.innerHTML = '';
+
+    for (const [grade, marks] of Object.entries(results)) {
+        const resultItem = document.createElement('li');
+        resultItem.innerHTML = `To achieve ${grade}, you need an average WAM of <strong>${marks}%</strong>  in remaining subjects.`;
+        resultsContainer.appendChild(resultItem);
+    }
 }

@@ -11,7 +11,7 @@
         <h1>Simple GPA and WAM Calculator</h1>
         <div class="input-section">
             <div class="degree-input">
-                <label for="degree-credits"><b>Your Total Degree Credit Points</b>:</label>
+                <label for="degree-credits" class="degree-credits-label">Your Total Degree Credit Points:</label>
                 <select id="degree-credits">
                     <option value="144">144</option>
                     <option value="192">192</option>
@@ -25,7 +25,6 @@
                 <p>Enter your subject details and click Add Subject (ENTER is faster).</p>
                 <p>For more information about the grading system, <a href="https://en.wikipedia.org/wiki/Academic_grading_in_Australia" target="_blank">please click here</a>.</p>
             </div>
-            <h2>Grade Details</h2>
             <div class="subject-input">
                 <label for="subject-name">Subject Name</label>
                 <input type="text" id="subject-name" placeholder="Optional">
@@ -41,8 +40,13 @@
             <h2>Result</h2>
             <p>WAM: <span id="wam-result">0.00</span></p>
             <p>GPA: <span id="gpa-result">0.00</span></p>
-            <p>4-Point GPA: <span id="four-point-gpa-result">0.00</span> </p>
+            <p>4-Point GPA: <span id="four-point-gpa-result">0.00</span></p>
             <p>Remaining Credits: <span id="remaining-credits">144</span></p>
+
+            <div class="grade-threshold-container">
+                <button id="calculate-threshold-btn" class="btn">Calculate Grade Threshold</button>
+                <ul id="grade-threshold-results" class="threshold-results"></ul>
+            </div>
         </div>
     </div>
     <div id="alert-modal" class="modal">
