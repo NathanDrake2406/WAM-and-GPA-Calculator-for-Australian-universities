@@ -2,6 +2,12 @@ let subjects = [];
 let totalDegreeCredits = 144; // Default value
 let defaultSubjectCredits = 6; // Default credit point for subjects
 
+// Validation constants
+const MIN_GRADE = 0;
+const MAX_GRADE = 100;
+const MAX_SUBJECT_CREDITS = 12;
+const CREDIT_INCREMENT = 2;
+
 document.getElementById('degree-credits').addEventListener('change', function() {
     const selectedOption = this.value;
     if (selectedOption === 'custom') {
@@ -170,45 +176,88 @@ function focusSubjectGrade() {
     document.getElementById('subject-grade').focus();
 }
 
+// Validation helper functions
+function validateGrade(grade) {
+    if (isNaN(grade) || grade < MIN_GRADE || grade > MAX_GRADE) {
+        return { valid: false, error: `Please enter a valid subject grade between ${MIN_GRADE} and ${MAX_GRADE}.` };
+    }
+    return { valid: true };
+}
+
+function validateCredits(credits) {
+    if (credits % CREDIT_INCREMENT !== 0 || credits > MAX_SUBJECT_CREDITS) {
+        return { valid: false, error: `Credit points must be less than ${MAX_SUBJECT_CREDITS} and is divisible by ${CREDIT_INCREMENT} (e.g., 6 or 8).` };
+    }
+    return { valid: true };
+}
+
+function getRemainingCredits() {
+    const totalCreditsCompleted = subjects.reduce((total, subject) => total + subject.credits, 0);
+    return totalDegreeCredits - totalCreditsCompleted;
+}
+
+function canAddSubject(credits) {
+    const remaining = getRemainingCredits();
+    if (remaining <= 0) {
+        return { valid: false, error: 'Credit points limit reached. Cannot add more subjects.' };
+    }
+    return { valid: true, maxCredits: Math.min(credits, remaining) };
+}
+
+// Recalculates all metrics after a subject is added or removed
+function recalculateAll() {
+    calculateGPA();
+    calculateFourPointGPA();
+    calculateWAM();
+    updateRemainingCredits();
+}
+
 function addSubject() {
+    // Get input values
     const subjectName = document.getElementById('subject-name').value || `Subject ${subjects.length + 1}`;
     const subjectGrade = parseFloat(document.getElementById('subject-grade').value);
     const subjectCredits = parseFloat(document.getElementById('subject-credits').value) || defaultSubjectCredits;
 
-    if (isNaN(subjectGrade) || subjectGrade < 0 || subjectGrade > 100) {
-        showAlert('Please enter a valid subject grade between 0 and 100.');
+    // Validate grade
+    const gradeValidation = validateGrade(subjectGrade);
+    if (!gradeValidation.valid) {
+        showAlert(gradeValidation.error);
         return;
     }
 
-    if (subjectCredits % 2 !== 0 || subjectCredits > 12) {
-        showAlert('Credit points must be less than 12 and is divisible by 2 (e.g., 6 or 8).');
+    // Validate credits
+    const creditsValidation = validateCredits(subjectCredits);
+    if (!creditsValidation.valid) {
+        showAlert(creditsValidation.error);
         return;
     }
 
-    const remainingCredits = totalDegreeCredits - subjects.reduce((total, subject) => total + subject.credits, 0);
-
-    if (remainingCredits > 0) {
-        const subject = { name: subjectName, grade: subjectGrade, credits: Math.min(subjectCredits, remainingCredits) };
-        subjects.push(subject);
-        updateSubjectList();
-        clearInputFields();
-        calculateGPA();
-        calculateFourPointGPA();
-        calculateWAM();
-        updateRemainingCredits();
-        focusSubjectGrade();
-    } else {
-        showAlert('Credit points limit reached. Cannot add more subjects.');
+    // Check if we can add more subjects
+    const canAdd = canAddSubject(subjectCredits);
+    if (!canAdd.valid) {
+        showAlert(canAdd.error);
+        return;
     }
+
+    // Add the subject with adjusted credits if necessary
+    const subject = {
+        name: subjectName,
+        grade: subjectGrade,
+        credits: canAdd.maxCredits
+    };
+    subjects.push(subject);
+
+    // Update UI and recalculate
+    updateSubjectList();
+    clearInputFields();
+    recalculateAll();
+    focusSubjectGrade();
 }
 
 function removeSubject(index) {
     subjects.splice(index, 1);
     updateSubjectList();
-    calculateGPA();
-    calculateFourPointGPA();
-    calculateWAM();
-    updateRemainingCredits();
+    recalculateAll();
 }
 
 function showAlert(message) {
